@@ -100,10 +100,10 @@ export async function validateSessionToken(
     await store.delete(tokenHash);
     return { valid: false };
   }
-  let renewed = false;
-  if (rec.expiresAt.getTime() - now.getTime() < SESSION_TTL_MS / 2) {
+  // Sliding renewal once past half-life.
+  const renewed = rec.expiresAt.getTime() - now.getTime() < SESSION_TTL_MS / 2;
+  if (renewed) {
     await store.updateExpiry(tokenHash, new Date(now.getTime() + SESSION_TTL_MS));
-    renewed = true;
   }
   return { valid: true, userId: rec.userId, renewed };
 }

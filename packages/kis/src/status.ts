@@ -77,15 +77,9 @@ export function onGrammarProgress(
   drillAccuracy: number,
   chapterMarkedDone: boolean,
 ): GrammarTracking {
-  const next = { ...t, drillAccuracy, chapterMarkedDone };
-  if (
-    t.status === "in_progress" &&
-    chapterMarkedDone &&
-    drillAccuracy >= GRAMMAR_COMPLETE_ACCURACY
-  ) {
-    next.status = "completed";
-  }
-  return next;
+  const completed =
+    t.status === "in_progress" && chapterMarkedDone && drillAccuracy >= GRAMMAR_COMPLETE_ACCURACY;
+  return { ...t, drillAccuracy, chapterMarkedDone, status: completed ? "completed" : t.status };
 }
 
 /** The hard constraint every generator/selector must respect. */

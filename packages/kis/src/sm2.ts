@@ -5,6 +5,8 @@
  * the card in today's queue (requeue flag) until passed.
  */
 
+import { match } from "ts-pattern";
+
 export type Rating = "again" | "hard" | "good" | "easy";
 
 export interface Sm2State {
@@ -50,24 +52,25 @@ export function review(state: Sm2State, rating: Rating): Sm2Result {
   }
 
   const reps = state.reps + 1;
-  let interval: number;
-  if (reps === 1) interval = 1;
-  else if (reps === 2) interval = 6;
-  else interval = Math.round(state.intervalDays * ease);
 
-  // "hard" dampens growth: never longer than good would give, min +1 day.
-  if (rating === "hard") {
-    interval = Math.max(state.intervalDays + 1, Math.round(interval * 0.8));
-  }
-  // "easy" small bonus.
-  if (rating === "easy") {
-    interval = Math.round(interval * 1.15);
-  }
-  interval = Math.max(1, interval);
+  // Base interval by repetition: 1 day -> 6 days -> previous * ease.
+  const base = match(reps)
+    .with(1, () => 1)
+    .with(2, () => 6)
+    .otherwise(() => Math.round(state.intervalDays * ease));
+
+  // Rating modifiers: "hard" dampens (min +1 day), "easy" small bonus, "good" as-is.
+  // ("again" already returned above; .otherwise covers it defensively.)
+  const adjusted = match(rating)
+    .with("hard", () => Math.max(state.intervalDays + 1, Math.round(base * 0.8)))
+    .with("easy", () => Math.round(base * 1.15))
+    .otherwise(() => base);
+
+  const intervalDays = Math.max(1, adjusted);
 
   return {
-    state: { ease, intervalDays: interval, reps },
-    nextIntervalDays: interval,
+    state: { ease, intervalDays, reps },
+    nextIntervalDays: intervalDays,
     requeueToday: false,
   };
 }
