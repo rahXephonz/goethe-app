@@ -1,0 +1,33 @@
+{
+  "name": "goethe-pro",
+  "private": true,
+  "packageManager": "pnpm@10.33.1",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
+    "lint": "biome check . && prettier --check \"**/*.astro\"",
+    "lint:fix": "biome check --write . && prettier --write \"**/*.astro\"",
+    "format": "biome format --write . && prettier --write \"**/*.astro\"",
+    "db:generate": "pnpm --filter @goethepro/db generate",
+    "db:migrate": "pnpm --filter @goethepro/db migrate",
+    "prepare": "lefthook install"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.2.0",
+    "@types/node": "^22.10.0",
+    "lefthook": "^1.10.0",
+    "prettier": "^3.9.5",
+    "prettier-plugin-astro": "^0.14.1",
+    "tsx": "^4.19.2",
+    "turbo": "^2.3.0",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "@goethepro/db": "workspace:*"
+  }
+}

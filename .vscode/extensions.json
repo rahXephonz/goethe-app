@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "biomejs.biome",
+    "esbenp.prettier-vscode",
+    "astro-build.astro-vscode",
+    "ms-azuretools.vscode-docker"
+  ]
+}

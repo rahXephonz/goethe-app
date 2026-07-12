@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: goethepro
+      POSTGRES_PASSWORD: goethepro
+      POSTGRES_DB: goethepro
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+
+  # Deterministic German grammar referee (architecture §8, QA layer 2)
+  languagetool:
+    image: erikvl87/languagetool:latest
+    environment:
+      Java_Xms: 512m
+      Java_Xmx: 1g
+    ports: ["8010:8010"]
+
+volumes:
+  pgdata:
