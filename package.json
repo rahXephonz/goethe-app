@@ -16,19 +16,23 @@
     "db:generate": "pnpm --filter @goethepro/db generate",
     "db:migrate": "pnpm --filter @goethepro/db migrate",
     "db:studio": "pnpm --filter @goethepro/db studio",
+    "gen:types": "tsx scripts/gen-web-types.ts",
     "prepare": "lefthook install"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.0",
     "@types/node": "^22.10.0",
+    "json-schema-to-typescript": "^15.0.0",
     "lefthook": "^1.10.0",
     "prettier": "^3.9.5",
     "prettier-plugin-astro": "^0.14.1",
     "tsx": "^4.19.2",
     "turbo": "^2.3.0",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "zod-to-json-schema": "^3.24.0"
   },
   "dependencies": {
+    "@goethepro/contracts": "workspace:*",
     "@goethepro/db": "workspace:*"
   }
 }

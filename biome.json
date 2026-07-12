@@ -7,7 +7,15 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!**/dist", "!**/.astro", "!**/*.astro", "!**/drizzle/meta", "!**/*.gen.ts"]
+    "includes": [
+      "**",
+      "!**/dist",
+      "!**/.astro",
+      "!**/*.astro",
+      "!**/drizzle/meta",
+      "!**/*.gen.ts",
+      "!apps/web/src/types"
+    ]
   },
   "formatter": {
     "enabled": true,
