@@ -1,30 +1,23 @@
+import {
+  type LoginRequest,
+  loginRequest,
+  type RegisterRequest,
+  registerRequest,
+} from "@goethepro/contracts/auth";
 import { Effect } from "effect";
-import { z } from "zod";
 import { ValidationError } from "@/errors.js";
 
-const registerSchema = z.object({
-  email: z
-    .string()
-    .email()
-    .transform((e) => e.toLowerCase().trim()),
-  password: z.string().min(10),
-  inviteCode: z.string().min(1),
-});
+// Request shapes are validated against the shared contracts; email is
+// normalized server-side so lookups and storage are case-insensitive.
+export type { LoginRequest as LoginInput, RegisterRequest as RegisterInput };
 
-const loginSchema = z.object({
-  email: z
-    .string()
-    .email()
-    .transform((e) => e.toLowerCase().trim()),
-  password: z.string().min(1),
-});
+const normalizeEmail = (email: string) => email.toLowerCase().trim();
 
-export type RegisterInput = z.infer<typeof registerSchema>;
-export type LoginInput = z.infer<typeof loginSchema>;
+export const parseRegister = (raw: unknown): Effect.Effect<RegisterRequest, ValidationError> => {
+  const result = registerRequest.safeParse(raw);
 
-export const parseRegister = (raw: unknown): Effect.Effect<RegisterInput, ValidationError> => {
-  const result = registerSchema.safeParse(raw);
-  if (result.success) return Effect.succeed(result.data);
+  if (result.success)
+    return Effect.succeed({ ...result.data, email: normalizeEmail(result.data.email) });
   const tooShort = result.error.issues.some(
     (i) => i.path[0] === "password" && i.code === "too_small",
   );
@@ -35,9 +28,9 @@ export const parseRegister = (raw: unknown): Effect.Effect<RegisterInput, Valida
   );
 };
 
-export const parseLogin = (raw: unknown): Effect.Effect<LoginInput, ValidationError> => {
-  const result = loginSchema.safeParse(raw);
+export const parseLogin = (raw: unknown): Effect.Effect<LoginRequest, ValidationError> => {
+  const result = loginRequest.safeParse(raw);
   return result.success
-    ? Effect.succeed(result.data)
+    ? Effect.succeed({ ...result.data, email: normalizeEmail(result.data.email) })
     : Effect.fail(new ValidationError({ messageKey: "api.error.invalidInput" }));
 };

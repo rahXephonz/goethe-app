@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@goethepro/auth": "workspace:*",
+    "@goethepro/contracts": "workspace:*",
     "@goethepro/db": "workspace:*",
     "@goethepro/i18n": "workspace:*",
     "@goethepro/kis": "workspace:*",
