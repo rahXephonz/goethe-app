@@ -1,6 +1,6 @@
 import { useTranslation } from "@goethepro/i18n/react";
 import { useLogout, useMe } from "../hooks/query/use-auth";
-import { withProviders } from "./query-provider";
+import { withProviders } from "./with-providers";
 
 /** Home header — greeting + logout. User info comes from the API (useMe), not the DB. */
 function HomeHeader() {

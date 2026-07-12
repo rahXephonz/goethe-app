@@ -2,7 +2,7 @@ import { useTranslation } from "@goethepro/i18n/react";
 import { useState } from "react";
 import { useRegister } from "../hooks/query/use-auth";
 import { ApiError } from "../lib/api/client";
-import { withProviders } from "./query-provider";
+import { withProviders } from "./with-providers";
 
 const inputClass =
   "w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none";
