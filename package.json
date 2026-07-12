@@ -15,6 +15,7 @@
     "format": "biome format --write . && prettier --write \"**/*.astro\"",
     "db:generate": "pnpm --filter @goethepro/db generate",
     "db:migrate": "pnpm --filter @goethepro/db migrate",
+    "db:studio": "pnpm --filter @goethepro/db studio",
     "prepare": "lefthook install"
   },
   "devDependencies": {

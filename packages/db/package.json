@@ -8,6 +8,7 @@
     "typecheck": "tsc --noEmit",
     "generate": "drizzle-kit generate",
     "migrate": "drizzle-kit migrate",
+    "studio": "drizzle-kit studio",
     "test": "echo 'no tests (schema only)'"
   },
   "dependencies": {
