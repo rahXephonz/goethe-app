@@ -1,0 +1,17 @@
+---
+import { createTranslator } from "@goethepro/i18n";
+import Layout from "../layouts/layout.astro";
+import { HomeHeaderIsland } from "../components/home-header";
+
+// Route is protected by middleware (session validation). User info is fetched
+// client-side from the API (/api/auth/me) — no direct DB access here.
+const { locale } = Astro.locals;
+const t = createTranslator(locale);
+---
+
+<Layout title={`${t("dashboard.title")} — ${t("common.appName")}`}>
+  <main class="mx-auto mt-[8vh] w-full max-w-2xl px-4">
+    <HomeHeaderIsland client:load locale={locale} />
+    <p class="mt-2 text-sm text-gray-600">{t("dashboard.sessionNote")}</p>
+  </main>
+</Layout>
