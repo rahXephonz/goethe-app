@@ -24,6 +24,13 @@ export const en = {
 
   "auth.logout": "Log out",
 
+  "api.error.invalidInput": "Invalid input",
+  "api.error.passwordTooShort": "Password must be at least 10 characters",
+  "api.error.inviteInvalid": "Invite code is invalid or already used",
+  "api.error.emailTaken": "Email is already registered",
+  "api.error.invalidCredentials": "Email or password is incorrect",
+  "api.error.unauthorized": "Unauthorized",
+
   "dashboard.title": "Dashboard",
   "dashboard.greeting": "Hallo, {email} 👋",
   "dashboard.sessionNote": "Session is validated in here",

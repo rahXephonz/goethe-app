@@ -10,6 +10,7 @@
   "dependencies": {
     "@goethepro/auth": "workspace:*",
     "@goethepro/db": "workspace:*",
+    "@goethepro/i18n": "workspace:*",
     "@goethepro/kis": "workspace:*",
     "@goethepro/rules-engine": "workspace:*",
     "@hono/node-server": "^1.13.7",

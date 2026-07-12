@@ -45,6 +45,9 @@ importers:
       '@goethepro/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@goethepro/i18n':
+        specifier: workspace:*
+        version: link:../../packages/i18n
       '@goethepro/kis':
         specifier: workspace:*
         version: link:../../packages/kis

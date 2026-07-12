@@ -8,6 +8,7 @@ import {
   verifyPassword,
 } from "@goethepro/auth";
 import { createDb, inviteCodes, profiles, streaks, users } from "@goethepro/db";
+import { createTranslator, LOCALE_COOKIE, resolveLocale, type Translator } from "@goethepro/i18n";
 import { serve } from "@hono/node-server";
 import { and, eq, isNull } from "drizzle-orm";
 import { type Context, Hono } from "hono";
@@ -20,8 +21,16 @@ const db = createDb();
 const store = drizzleSessionStore(db);
 const isProd = process.env.NODE_ENV === "production";
 
-type Env = { Variables: { userId: string | null } };
+type Env = { Variables: { userId: string | null; t: Translator } };
 const app = new Hono<Env>();
+
+// --- i18n middleware: resolve locale (cookie -> Accept-Language -> en) ------
+app.use("*", async (c, next) => {
+  const cookieLocale = getCookie(c, LOCALE_COOKIE);
+  const acceptLang = c.req.header("Accept-Language")?.split(",")[0];
+  c.set("t", createTranslator(resolveLocale(cookieLocale ?? acceptLang)));
+  await next();
+});
 
 // --- session middleware: resolves cookie -> userId (or null) ---------------
 app.use("*", async (c, next) => {
@@ -49,14 +58,22 @@ const registerSchema = z.object({
     .string()
     .email()
     .transform((e) => e.toLowerCase().trim()),
-  password: z.string().min(10, "Password minimal 10 karakter"),
+  password: z.string().min(10),
   inviteCode: z.string().min(1),
 });
 
 app.post("/api/auth/register", async (c) => {
+  const t = c.get("t");
   const body = registerSchema.safeParse(await c.req.json().catch(() => null));
-  if (!body.success)
-    return c.json({ error: body.error.issues[0]?.message ?? "Input tidak valid" }, 400);
+  if (!body.success) {
+    const tooShort = body.error.issues.some(
+      (i) => i.path[0] === "password" && i.code === "too_small",
+    );
+    return c.json(
+      { error: t(tooShort ? "api.error.passwordTooShort" : "api.error.invalidInput") },
+      400,
+    );
+  }
   const { email, password, inviteCode } = body.data;
 
   // Closed beta: valid, unused invite code required.
@@ -65,14 +82,14 @@ app.post("/api/auth/register", async (c) => {
     .from(inviteCodes)
     .where(and(eq(inviteCodes.code, inviteCode), isNull(inviteCodes.usedBy)))
     .limit(1);
-  if (!invite[0]) return c.json({ error: "Kode undangan tidak valid atau sudah dipakai" }, 403);
+  if (!invite[0]) return c.json({ error: t("api.error.inviteInvalid") }, 403);
 
   const existing = await db
     .select({ id: users.id })
     .from(users)
     .where(eq(users.email, email))
     .limit(1);
-  if (existing[0]) return c.json({ error: "Email sudah terdaftar" }, 409);
+  if (existing[0]) return c.json({ error: t("api.error.emailTaken") }, 409);
 
   const userId = nanoid();
   await db.transaction(async (tx) => {
@@ -99,14 +116,15 @@ const loginSchema = z.object({
 });
 
 app.post("/api/auth/login", async (c) => {
+  const t = c.get("t");
   const body = loginSchema.safeParse(await c.req.json().catch(() => null));
-  if (!body.success) return c.json({ error: "Input tidak valid" }, 400);
+  if (!body.success) return c.json({ error: t("api.error.invalidInput") }, 400);
   const { email, password } = body.data;
 
   const row = (await db.select().from(users).where(eq(users.email, email)).limit(1))[0];
   // Uniform error: never reveal whether the email exists.
   if (!row || !verifyPassword(password, row.passwordHash)) {
-    return c.json({ error: "Email atau password salah" }, 401);
+    return c.json({ error: t("api.error.invalidCredentials") }, 401);
   }
   const token = await createSession(store, row.id);
   setSessionCookie(c, token);
@@ -122,7 +140,7 @@ app.post("/api/auth/logout", async (c) => {
 
 app.get("/api/auth/me", async (c) => {
   const userId = c.get("userId");
-  if (!userId) return c.json({ error: "Unauthorized" }, 401);
+  if (!userId) return c.json({ error: c.get("t")("api.error.unauthorized") }, 401);
   const row = (
     await db
       .select({ id: users.id, email: users.email })
@@ -136,7 +154,7 @@ app.get("/api/auth/me", async (c) => {
 // --- protected example: profile read (funnel answers land here later) -------
 app.get("/api/profile", async (c) => {
   const userId = c.get("userId");
-  if (!userId) return c.json({ error: "Unauthorized" }, 401);
+  if (!userId) return c.json({ error: c.get("t")("api.error.unauthorized") }, 401);
   const row = (await db.select().from(profiles).where(eq(profiles.userId, userId)).limit(1))[0];
   return c.json({ profile: row ?? null });
 });

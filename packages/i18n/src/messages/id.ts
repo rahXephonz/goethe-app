@@ -26,6 +26,13 @@ export const id: Messages = {
 
   "auth.logout": "Keluar",
 
+  "api.error.invalidInput": "Input tidak valid",
+  "api.error.passwordTooShort": "Password minimal 10 karakter",
+  "api.error.inviteInvalid": "Kode undangan tidak valid atau sudah dipakai",
+  "api.error.emailTaken": "Email sudah terdaftar",
+  "api.error.invalidCredentials": "Email atau password salah",
+  "api.error.unauthorized": "Tidak diizinkan",
+
   "dashboard.title": "Dasbor",
   "dashboard.greeting": "Hallo, {email} 👋",
   "dashboard.sessionNote": "Sesi tervalidasi di sini",

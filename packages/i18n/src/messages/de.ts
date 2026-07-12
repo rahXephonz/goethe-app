@@ -26,6 +26,13 @@ export const de: Messages = {
 
   "auth.logout": "Abmelden",
 
+  "api.error.invalidInput": "Ungültige Eingabe",
+  "api.error.passwordTooShort": "Passwort muss mindestens 10 Zeichen lang sein",
+  "api.error.inviteInvalid": "Einladungscode ist ungültig oder bereits verwendet",
+  "api.error.emailTaken": "E-Mail ist bereits registriert",
+  "api.error.invalidCredentials": "E-Mail oder Passwort ist falsch",
+  "api.error.unauthorized": "Nicht autorisiert",
+
   "dashboard.title": "Dashboard",
   "dashboard.greeting": "Hallo, {email} 👋",
   "dashboard.sessionNote": "Sitzung ist hier validiert",
