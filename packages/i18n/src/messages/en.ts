@@ -30,6 +30,7 @@ export const en = {
   "api.error.emailTaken": "Email is already registered",
   "api.error.invalidCredentials": "Email or password is incorrect",
   "api.error.unauthorized": "Unauthorized",
+  "api.error.internal": "Something went wrong. Please try again.",
 
   "dashboard.title": "Dashboard",
   "dashboard.greeting": "Hallo, {email} 👋",

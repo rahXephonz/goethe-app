@@ -32,6 +32,7 @@ export const de: Messages = {
   "api.error.emailTaken": "E-Mail ist bereits registriert",
   "api.error.invalidCredentials": "E-Mail oder Passwort ist falsch",
   "api.error.unauthorized": "Nicht autorisiert",
+  "api.error.internal": "Etwas ist schiefgelaufen. Bitte erneut versuchen.",
 
   "dashboard.title": "Dashboard",
   "dashboard.greeting": "Hallo, {email} 👋",

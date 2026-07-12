@@ -32,6 +32,7 @@ export const id: Messages = {
   "api.error.emailTaken": "Email sudah terdaftar",
   "api.error.invalidCredentials": "Email atau password salah",
   "api.error.unauthorized": "Tidak diizinkan",
+  "api.error.internal": "Terjadi kesalahan. Coba lagi.",
 
   "dashboard.title": "Dasbor",
   "dashboard.greeting": "Hallo, {email} 👋",
