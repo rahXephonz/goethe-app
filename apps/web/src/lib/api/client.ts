@@ -1,21 +1,18 @@
 /**
- * Centralized API client. Every request goes through here so base URL,
+ * Centralized API client as Effect. Every request goes through here so base URL,
  * credentials, JSON handling, and error shape live in ONE place.
  *
- * Domain files (auth.ts, profile.ts, ...) build on top of this — they never
- * call `fetch` directly.
+ * Domain files (auth.ts, profile.ts, ...) build on top of this and return
+ * Effects; they never call `fetch` directly. Effects are run at the React Query
+ * boundary (see run.ts) — no runtime/services needed in the browser bundle.
  */
+import { Data, Effect } from "effect";
 
-/** Thrown on any non-2xx response. Carries the server's status + message. */
-export class ApiError extends Error {
-  constructor(
-    readonly status: number,
-    message: string,
-  ) {
-    super(message);
-    this.name = "ApiError";
-  }
-}
+/** Typed failure for any non-2xx response (or network/parse error). */
+export class ApiError extends Data.TaggedError("ApiError")<{
+  readonly status: number;
+  readonly message: string;
+}> {}
 
 /**
  * Base path. Requests are same-origin: Astro proxies `/api` -> Hono in dev,
@@ -23,41 +20,43 @@ export class ApiError extends Error {
  */
 const BASE = "/api";
 
-type RequestOptions = Omit<RequestInit, "body"> & { body?: unknown };
-
-async function request<T>(path: string, opts: RequestOptions = {}): Promise<T> {
-  const { body, headers, ...rest } = opts;
-
-  const res = await fetch(`${BASE}${path}`, {
-    ...rest,
-    credentials: "include",
-    headers: {
-      ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
-      ...headers,
-    },
-    body: body !== undefined ? JSON.stringify(body) : undefined,
-  });
-
-  // 204 / empty bodies -> undefined
-  const text = await res.text();
-  const data = text ? JSON.parse(text) : undefined;
-
-  if (!res.ok) {
-    const message =
-      (data && typeof data === "object" && "error" in data && String(data.error)) ||
-      `Request failed (${res.status})`;
-    throw new ApiError(res.status, message);
-  }
-
-  return data as T;
+export interface RequestOptions {
+  readonly method?: string;
+  readonly body?: unknown;
 }
 
-export const api = {
-  get: <T>(path: string, opts?: RequestOptions) => request<T>(path, { ...opts, method: "GET" }),
-  post: <T>(path: string, body?: unknown, opts?: RequestOptions) =>
-    request<T>(path, { ...opts, method: "POST", body }),
-  put: <T>(path: string, body?: unknown, opts?: RequestOptions) =>
-    request<T>(path, { ...opts, method: "PUT", body }),
-  delete: <T>(path: string, opts?: RequestOptions) =>
-    request<T>(path, { ...opts, method: "DELETE" }),
-};
+export function request<A>(path: string, opts: RequestOptions = {}): Effect.Effect<A, ApiError> {
+  return Effect.gen(function* () {
+    const res = yield* Effect.tryPromise({
+      try: (signal) =>
+        fetch(`${BASE}${path}`, {
+          method: opts.method ?? "GET",
+          credentials: "include",
+          headers: opts.body !== undefined ? { "Content-Type": "application/json" } : undefined,
+          body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined,
+          signal,
+        }),
+      catch: () => new ApiError({ status: 0, message: "Network error" }),
+    });
+
+    const text = yield* Effect.tryPromise({
+      try: () => res.text(),
+      catch: () => new ApiError({ status: res.status, message: "Failed to read response" }),
+    });
+
+    const data = yield* Effect.try({
+      try: (): unknown => (text ? JSON.parse(text) : undefined),
+      catch: () => new ApiError({ status: res.status, message: "Invalid JSON response" }),
+    });
+
+    if (!res.ok) {
+      const message =
+        data && typeof data === "object" && "error" in data
+          ? String((data as { error: unknown }).error)
+          : `Request failed (${res.status})`;
+      return yield* new ApiError({ status: res.status, message });
+    }
+
+    return data as A;
+  });
+}

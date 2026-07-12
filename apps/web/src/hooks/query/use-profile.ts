@@ -1,11 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { profileApi } from "../../lib/api/profile";
-import { queryKeys } from "./query-client";
+import { queryKeys } from "@/hooks/query/query-client";
+import { profileApi } from "@/lib/api/profile";
+import { runRequest } from "@/lib/api/run";
 
 /** Current user's profile. */
 export function useProfile() {
   return useQuery({
     queryKey: queryKeys.profile.detail,
-    queryFn: profileApi.get,
+    queryFn: () => runRequest(profileApi.get()),
   });
 }

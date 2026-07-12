@@ -2,7 +2,6 @@ import { useTranslation } from "@goethepro/i18n/react";
 import { useLogout, useMe } from "../hooks/query/use-auth";
 import { withProviders } from "./with-providers";
 
-/** Home header — greeting + logout. User info comes from the API (useMe), not the DB. */
 function HomeHeader() {
   const { t } = useTranslation();
   const { data: user, isLoading } = useMe();
@@ -25,5 +24,4 @@ function HomeHeader() {
   );
 }
 
-/** Self-contained island (carries its own providers) — mount in .astro. */
 export const HomeHeaderIsland = withProviders(HomeHeader);

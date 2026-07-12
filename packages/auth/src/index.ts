@@ -12,9 +12,6 @@
  */
 import { createHash, randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 
-// ---------------------------------------------------------------------------
-// Passwords
-// ---------------------------------------------------------------------------
 const SCRYPT_N = 16384,
   SCRYPT_R = 8,
   SCRYPT_P = 1,
@@ -43,9 +40,6 @@ export function verifyPassword(password: string, stored: string): boolean {
   return actual.length === expected.length && timingSafeEqual(actual, expected);
 }
 
-// ---------------------------------------------------------------------------
-// Session tokens
-// ---------------------------------------------------------------------------
 export const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 30; // 30 days
 export const SESSION_COOKIE = "session";
 

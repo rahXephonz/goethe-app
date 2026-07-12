@@ -1,28 +1,29 @@
 /** Auth API — requests for the auth domain ONLY. Mirrors `/api/auth/*` on Hono. */
-import { ApiError, api } from "./client";
-
-export type AuthUser = { id: string; email: string };
-
-export type LoginInput = { email: string; password: string };
-export type RegisterInput = { email: string; password: string; inviteCode: string };
+import { Effect } from "effect";
+import { type ApiError, request } from "@/lib/api/client";
+import type { AuthResponse, LoginRequest, LogoutResponse, RegisterRequest } from "@/types/auth";
+import type { MeResponse, User } from "@/types/user";
 
 export const authApi = {
   /** GET /api/auth/me -> current user, or `null` when unauthenticated (401). */
-  me: () =>
-    api
-      .get<{ user: AuthUser | null }>("/auth/me")
-      .then((r) => r.user)
-      .catch((e) => {
-        if (e instanceof ApiError && e.status === 401) return null;
-        throw e;
-      }),
+  me: (): Effect.Effect<User | null, ApiError> =>
+    request<MeResponse>("/auth/me").pipe(
+      Effect.map((r) => r.user),
+      Effect.catchIf(
+        (e) => e.status === 401,
+        () => Effect.succeed(null),
+      ),
+    ),
 
   /** POST /api/auth/login */
-  login: (input: LoginInput) => api.post<{ userId: string }>("/auth/login", input),
+  login: (body: LoginRequest): Effect.Effect<AuthResponse, ApiError> =>
+    request<AuthResponse>("/auth/login", { method: "POST", body }),
 
   /** POST /api/auth/register */
-  register: (input: RegisterInput) => api.post<{ userId: string }>("/auth/register", input),
+  register: (body: RegisterRequest): Effect.Effect<AuthResponse, ApiError> =>
+    request<AuthResponse>("/auth/register", { method: "POST", body }),
 
   /** POST /api/auth/logout */
-  logout: () => api.post<{ ok: true }>("/auth/logout"),
+  logout: (): Effect.Effect<LogoutResponse, ApiError> =>
+    request<LogoutResponse>("/auth/logout", { method: "POST" }),
 };
