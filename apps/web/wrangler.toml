@@ -1,0 +1,10 @@
+name = "goethepro-web"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = "./dist"
+
+# API_URL: absolute origin of the Hono API, used by SSR/middleware for
+# server-to-server auth checks. Set the real value as a secret/var in the
+# Cloudflare dashboard (or `wrangler secret put API_URL`) for production.
+[vars]
+API_URL = "http://localhost:8787"
