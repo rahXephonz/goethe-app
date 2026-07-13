@@ -1,0 +1,30 @@
+---
+import "lenis/dist/lenis.css";
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "Learn German A0 to B1, one honest day at a time." } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+  </head>
+  <body class="min-h-screen bg-gray-50 text-gray-900 antialiased">
+    <slot />
+    <script>
+      import { initSmoothScroll } from "../lib/motion/smooth-scroll";
+      import { initReveals } from "../lib/motion/reveal";
+
+      initSmoothScroll();
+      initReveals();
+    </script>
+  </body>
+</html>

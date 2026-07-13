@@ -1,0 +1,68 @@
+---
+import LandingLayout from "../layouts/landing-layout.astro";
+import { appUrl } from "../lib/app-url";
+---
+
+<LandingLayout title="goethe.pro — German for the Ausbildung route">
+  <main>
+    <!-- Skeleton sections: structure + motion wiring only. Visual design pass
+         happens separately (design skills + reference screenshots). -->
+    <section class="flex min-h-screen flex-col items-center justify-center gap-6 px-6 text-center">
+      <h1 data-reveal class="max-w-3xl text-5xl font-bold tracking-tight sm:text-6xl">
+        German, A0 to B1. Built for the Ausbildung route.
+      </h1>
+      <p data-reveal class="max-w-xl text-lg text-gray-600">
+        A daily loop that only tests what you have actually learned. Closed beta, invite only.
+      </p>
+      <div data-reveal class="flex gap-4">
+        <a
+          href={appUrl("/register")}
+          class="rounded-lg bg-gray-900 px-6 py-3 font-medium text-gray-50 transition hover:bg-gray-700"
+        >
+          Redeem invite
+        </a>
+        <a
+          href={appUrl("/login")}
+          class="rounded-lg border border-gray-300 px-6 py-3 font-medium transition hover:bg-gray-100"
+        >
+          Sign in
+        </a>
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-5xl px-6 py-24">
+      <h2 data-reveal class="text-3xl font-bold tracking-tight">One honest daily loop</h2>
+      <div data-reveal-group class="mt-12 grid gap-8 sm:grid-cols-3">
+        <div data-reveal class="rounded-xl border border-gray-200 bg-white p-6">
+          <h3 class="font-semibold">Today's Plan</h3>
+          <p class="mt-2 text-sm text-gray-600">
+            One unit, your due reviews, one exam. No infinite feed.
+          </p>
+        </div>
+        <div data-reveal class="rounded-xl border border-gray-200 bg-white p-6">
+          <h3 class="font-semibold">Daily Exam</h3>
+          <p class="mt-2 text-sm text-gray-600">
+            Ten questions assembled only from vocab and grammar you have met.
+          </p>
+        </div>
+        <div data-reveal class="rounded-xl border border-gray-200 bg-white p-6">
+          <h3 class="font-semibold">Real progress</h3>
+          <p class="mt-2 text-sm text-gray-600">
+            Skill scores appear once there is enough data — never before.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="flex flex-col items-center gap-6 px-6 py-32 text-center">
+      <h2 data-reveal class="text-3xl font-bold tracking-tight">Have an invite code?</h2>
+      <a
+        data-reveal
+        href={appUrl("/register")}
+        class="rounded-lg bg-gray-900 px-6 py-3 font-medium text-gray-50 transition hover:bg-gray-700"
+      >
+        Create your account
+      </a>
+    </section>
+  </main>
+</LandingLayout>

@@ -7,7 +7,9 @@
   },
   "scripts": {
     "dev": "turbo run dev",
+    "dev:landing": "turbo run dev --filter=@goethepro/landing",
     "build": "turbo run build",
+    "build:landing": "turbo run build --filter=@goethepro/landing",
     "test": "turbo run test",
     "typecheck": "turbo run typecheck",
     "lint": "biome check . && prettier --check \"**/*.astro\"",
