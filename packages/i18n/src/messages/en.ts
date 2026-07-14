@@ -35,6 +35,35 @@ export const en = {
   "dashboard.title": "Dashboard",
   "dashboard.greeting": "Hallo, {email} 👋",
   "dashboard.sessionNote": "Session is validated in here",
+
+  "landing.nav.howItWorks": "How it works",
+  "landing.nav.openApp": "Open App",
+  "landing.nav.language": "Language",
+  "landing.nav.menu": "Menu",
+
+  "landing.nav.platform": "Platform",
+  "landing.nav.learningPath": "Learning Path",
+  "landing.nav.platform.todaysPlan": "Today's Plan",
+  "landing.nav.platform.dailyExam": "Daily Exam",
+  "landing.nav.platform.srsReview": "SRS Review",
+  "landing.nav.platform.mistakeLog": "Mistake Log",
+  "landing.nav.platform.roadmap": "Roadmap",
+  "landing.nav.platform.streak": "Streak",
+  "landing.nav.platform.schreiben": "Schreiben Grading",
+  "landing.nav.platform.placementTest": "Placement Test",
+  "landing.nav.platform.aiAssistant": "AI Assistant",
+
+  "landing.hero.title": "Learn German in the quiet hours.",
+  "landing.hero.subtitle":
+    "A calm daily loop — one unit, your reviews, one exam — built only from what you have actually learned. A0 to B1, free and open.",
+  "landing.hero.redeemInvite": "Redeem invite",
+
+  "landing.footer.headline1": "German, A0 to B1.",
+  "landing.footer.headline2": "Built for the Ausbildung route.",
+  "landing.footer.cardLead": "goethe.pro is a calm daily loop",
+  "landing.footer.cardRest": "that takes you from A0 to B1 — one quiet evening at a time.",
+  "landing.footer.beta": "Free and open — invite-gated beta.",
+  "landing.footer.madeWith": "Made with ♥ for everyone learning German",
 } as const;
 
 /** Every message key in the app. Other catalogs must satisfy this exactly. */

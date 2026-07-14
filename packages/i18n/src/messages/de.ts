@@ -37,4 +37,33 @@ export const de: Messages = {
   "dashboard.title": "Dashboard",
   "dashboard.greeting": "Hallo, {email} 👋",
   "dashboard.sessionNote": "Sitzung ist hier validiert",
+
+  "landing.nav.howItWorks": "So funktioniert's",
+  "landing.nav.openApp": "App öffnen",
+  "landing.nav.language": "Sprache",
+  "landing.nav.menu": "Menü",
+
+  "landing.nav.platform": "Plattform",
+  "landing.nav.learningPath": "Lernpfad",
+  "landing.nav.platform.todaysPlan": "Tagesplan",
+  "landing.nav.platform.dailyExam": "Tägliche Prüfung",
+  "landing.nav.platform.srsReview": "SRS-Wiederholung",
+  "landing.nav.platform.mistakeLog": "Fehlerprotokoll",
+  "landing.nav.platform.roadmap": "Roadmap",
+  "landing.nav.platform.streak": "Streak",
+  "landing.nav.platform.schreiben": "Schreiben-Bewertung",
+  "landing.nav.platform.placementTest": "Einstufungstest",
+  "landing.nav.platform.aiAssistant": "KI-Assistent",
+
+  "landing.hero.title": "Deutsch lernen in den stillen Stunden.",
+  "landing.hero.subtitle":
+    "Eine ruhige tägliche Routine — eine Einheit, deine Wiederholungen, eine Prüfung — nur aus dem, was du wirklich gelernt hast. A0 bis B1, frei und offen.",
+  "landing.hero.redeemInvite": "Einladungscode einlösen",
+
+  "landing.footer.headline1": "Deutsch, A0 bis B1.",
+  "landing.footer.headline2": "Gemacht für den Ausbildungsweg.",
+  "landing.footer.cardLead": "goethe.pro ist eine ruhige tägliche Routine",
+  "landing.footer.cardRest": "die dich von A0 zu B1 bringt — ein stiller Abend nach dem anderen.",
+  "landing.footer.beta": "Frei und offen — Beta mit Einladungscode.",
+  "landing.footer.madeWith": "Mit ♥ gemacht für alle, die Deutsch lernen",
 };
