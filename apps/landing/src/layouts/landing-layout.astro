@@ -1,24 +1,43 @@
 ---
 import "lenis/dist/lenis.css";
 import "../styles/global.css";
+import { DEFAULT_LOCALE, LOCALES, type Locale } from "@goethepro/i18n";
+import Footer from "../components/footer.astro";
+import Navbar from "../components/navbar.astro";
 
 interface Props {
+  locale?: Locale;
   title: string;
   description?: string;
 }
 
-const { title, description = "Learn German A0 to B1, one honest day at a time." } = Astro.props;
+const {
+  locale = DEFAULT_LOCALE,
+  title,
+  description = "Learn German A0 to B1, one honest day at a time.",
+} = Astro.props;
+
+const localePath = (l: Locale) => (l === "en" ? "/" : `/${l}/`);
 ---
 
-<html lang="en">
+<html lang={locale}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    {
+      LOCALES.map((l) => (
+        <link rel="alternate" hreflang={l} href={new URL(localePath(l), Astro.site)} />
+      ))
+    }
+    <link rel="alternate" hreflang="x-default" href={new URL("/", Astro.site)} />
     <title>{title}</title>
   </head>
-  <body class="min-h-screen bg-gray-50 text-gray-900 antialiased">
+  <body class="min-h-screen bg-cream text-ink antialiased">
+    <Navbar locale={locale} />
     <slot />
+    <Footer locale={locale} />
     <script>
       import { initSmoothScroll } from "../lib/motion/smooth-scroll";
       import { initReveals } from "../lib/motion/reveal";

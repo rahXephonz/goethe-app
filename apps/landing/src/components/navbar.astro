@@ -1,0 +1,404 @@
+---
+import { createTranslator, LOCALE_LABELS, LOCALES, type Locale } from "@goethepro/i18n";
+import { ChevronDown, ChevronRight, Globe, Languages, Menu, X } from "@lucide/astro";
+import { appUrl } from "../lib/app-url";
+import Logo from "./logo.astro";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = createTranslator(locale);
+
+const localeHref = (l: Locale) => (l === "en" ? "/" : `/${l}/`);
+
+// Anchor targets are the sections the content pass will add; harmless no-ops
+// until then.
+const platformItems = [
+  { href: "#todays-plan", label: t("landing.nav.platform.todaysPlan") },
+  { href: "#daily-exam", label: t("landing.nav.platform.dailyExam") },
+  { href: "#srs-review", label: t("landing.nav.platform.srsReview") },
+  { href: "#mistake-log", label: t("landing.nav.platform.mistakeLog") },
+  { href: "#roadmap", label: t("landing.nav.platform.roadmap") },
+  { href: "#streak", label: t("landing.nav.platform.streak") },
+  { href: "#schreiben", label: t("landing.nav.platform.schreiben") },
+  { href: "#placement-test", label: t("landing.nav.platform.placementTest") },
+  { href: "#ai-assistant", label: t("landing.nav.platform.aiAssistant") },
+];
+
+const navLinks = [
+  { href: "#learning-path", label: t("landing.nav.learningPath") },
+  { href: "#how-it-works", label: t("landing.nav.howItWorks") },
+];
+---
+
+<header id="site-header" class="group fixed inset-x-0 top-0 z-50 p-4 sm:p-5">
+  <div class="relative mx-auto flex max-w-5xl items-stretch gap-3">
+    <nav
+      aria-label="Main"
+      class="flex flex-1 items-center justify-between rounded-xl border border-ink/5 bg-white px-4 py-2.5 shadow-sm transition-shadow duration-200 group-data-scrolled:shadow-md sm:px-5"
+    >
+      <a href={localeHref(locale)}>
+        <Logo />
+      </a>
+
+      <div class="hidden items-center gap-2 md:flex">
+        <button
+          type="button"
+          id="platform-toggle"
+          aria-expanded="false"
+          aria-controls="platform-menu"
+          class="flex cursor-pointer items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium text-ink transition-colors aria-expanded:bg-cream hover:text-brand"
+        >
+          {t("landing.nav.platform")}
+          <ChevronDown
+            size={14}
+            aria-hidden="true"
+            class="transition-transform group-has-[#platform-menu[data-open]]:rotate-180"
+          />
+        </button>
+        {
+          navLinks.map((link) => (
+            <a
+              href={link.href}
+              class="px-2 text-sm font-medium text-ink transition-colors hover:text-brand"
+            >
+              {link.label}
+            </a>
+          ))
+        }
+      </div>
+
+      <button
+        type="button"
+        id="menu-toggle"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        aria-label={t("landing.nav.menu")}
+        class="grid size-10 cursor-pointer place-items-center rounded-full bg-brand text-ink transition-colors hover:bg-brand-deep hover:text-white md:hidden"
+      >
+        <Menu size={18} aria-hidden="true" class="text-white" />
+      </button>
+    </nav>
+
+    <div
+      class="relative hidden items-center gap-1.5 rounded-xl border border-ink/5 bg-white p-2 shadow-sm transition-shadow duration-200 group-data-scrolled:shadow-md md:flex"
+    >
+      <button
+        type="button"
+        id="lang-toggle"
+        aria-expanded="false"
+        aria-controls="lang-menu"
+        aria-label={t("landing.nav.language")}
+        class="flex cursor-pointer items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium text-ink/70 transition-colors hover:bg-cream hover:text-ink"
+      >
+        <Globe size={16} aria-hidden="true" />
+        <span class="uppercase">{locale}</span>
+        <ChevronDown size={14} aria-hidden="true" />
+      </button>
+      <ul
+        id="lang-menu"
+        class="invisible absolute inset-x-0 top-full z-10 mt-2 rounded-xl border border-ink/5 bg-white p-1.5 opacity-0 shadow-lg"
+      >
+        {
+          LOCALES.map((l) => (
+            <li>
+              <a
+                href={localeHref(l)}
+                aria-current={l === locale ? "true" : undefined}
+                class:list={[
+                  "flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-cream",
+                  l === locale ? "text-brand" : "text-ink",
+                ]}
+              >
+                <Languages size={14} aria-hidden="true" class="text-ink/90" />
+                {LOCALE_LABELS[l]}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <a
+        href={appUrl("/")}
+        class="rounded-xl bg-linear-to-b from-brand to-brand-deep px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-px hover:shadow-md hover:brightness-110"
+      >
+        {t("landing.nav.openApp")}
+      </a>
+    </div>
+
+    <!-- Platform mega menu -->
+    <div
+      id="platform-menu"
+      class="invisible absolute inset-x-0 top-full z-20 mt-2 rounded-xl border border-ink/5 bg-white p-4 opacity-0 shadow-lg max-md:hidden"
+    >
+      <div class="grid gap-4 md:grid-cols-[3fr_3fr]">
+        <a
+          href={appUrl("/")}
+          class="group/card relative flex min-h-64 flex-col justify-end overflow-hidden rounded-xl bg-linear-to-b from-brand to-brand-deep p-5"
+        >
+          <div
+            class="absolute -top-16 -right-16 size-56 rounded-full bg-white/15 transition-transform duration-300 group-hover/card:scale-110"
+            aria-hidden="true"
+          >
+          </div>
+          <div class="flex items-end justify-between gap-4">
+            <span class="font-display text-3xl font-normal text-white">
+              {t("landing.nav.platform")}
+            </span>
+            <span
+              class="grid size-11 shrink-0 place-items-center rounded-full bg-white text-ink transition-transform duration-200 group-hover/card:translate-x-1"
+            >
+              <ChevronRight size={16} aria-hidden="true" />
+            </span>
+          </div>
+        </a>
+
+        <ul class="grid content-start grid-cols-2 gap-x-6 gap-y-1 p-2">
+          {
+            platformItems.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  class="block rounded-lg px-3 py-2.5 text-[15px] font-medium text-ink transition-colors hover:bg-cream hover:text-brand"
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile drawer: slides in from the left, scrim behind it. -->
+  <div id="mobile-menu" class="group/drawer md:hidden">
+    <div
+      id="mobile-scrim"
+      aria-hidden="true"
+      class="invisible fixed inset-0 z-40 bg-ink/40 opacity-0 transition-[opacity,visibility] duration-200 ease-out group-data-open/drawer:visible group-data-open/drawer:opacity-100 motion-reduce:transition-none"
+    >
+    </div>
+    <aside
+      aria-label={t("landing.nav.menu")}
+      class="fixed inset-y-0 left-0 z-50 flex w-full -translate-x-full flex-col gap-1 overflow-y-auto bg-white p-4 shadow-xl transition-transform duration-300 ease-out group-data-open/drawer:translate-x-0 motion-reduce:transition-none"
+    >
+      <div class="flex items-center justify-between">
+        <a href={localeHref(locale)} class="px-5 py-2">
+          <div class="scale-125">
+            <Logo />
+          </div>
+        </a>
+        <button
+          type="button"
+          id="mobile-close"
+          aria-label={t("landing.nav.menu")}
+          class="grid size-10 cursor-pointer place-items-center rounded-full bg-cream text-ink transition-colors hover:bg-brand hover:text-white"
+        >
+          <X size={16} aria-hidden="true" />
+        </button>
+      </div>
+      <div class="my-1 h-px bg-ink/5"></div>
+      <span class="px-3 pt-1 text-xs font-semibold tracking-wide text-ink/40 uppercase">
+        {t("landing.nav.platform")}
+      </span>
+      {
+        platformItems.map((item) => (
+          <a
+            href={item.href}
+            class="rounded-xl px-3 py-2 text-sm font-medium text-ink transition-colors hover:bg-cream"
+          >
+            {item.label}
+          </a>
+        ))
+      }
+      <div class="my-1 h-px bg-ink/5"></div>
+      {
+        navLinks.map((link) => (
+          <a
+            href={link.href}
+            class="rounded-xl px-3 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-cream"
+          >
+            {link.label}
+          </a>
+        ))
+      }
+      <div class="my-1 h-px bg-ink/5"></div>
+      <details class="group/lang">
+        <summary
+          class="flex cursor-pointer list-none items-center justify-between rounded-xl px-3 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-cream [&::-webkit-details-marker]:hidden"
+        >
+          <span class="flex items-center gap-2">
+            <Globe size={16} aria-hidden="true" />
+            {t("landing.nav.language")}
+            <span class="text-xs text-ink/50 uppercase">{locale}</span>
+          </span>
+          <ChevronDown
+            size={14}
+            aria-hidden="true"
+            class="transition-transform group-open/lang:rotate-180"
+          />
+        </summary>
+        <div class="mt-1 flex flex-col gap-1 pl-4">
+          {
+            LOCALES.map((l) => (
+              <a
+                href={localeHref(l)}
+                aria-current={l === locale ? "true" : undefined}
+                class:list={[
+                  "flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm transition-colors hover:bg-cream",
+                  l === locale ? "text-brand" : "text-ink",
+                ]}
+              >
+                <Languages size={14} aria-hidden="true" class="text-ink/90" />
+                {LOCALE_LABELS[l]}
+              </a>
+            ))
+          }
+        </div>
+      </details>
+      <a
+        href={appUrl("/")}
+        class="mt-1 rounded-xl bg-linear-to-b from-brand to-brand-deep px-4 py-3 text-center text-sm font-semibold text-white transition hover:brightness-110"
+      >
+        {t("landing.nav.openApp")}
+      </a>
+    </aside>
+  </div>
+</header>
+
+<script>
+  import { gsap } from "gsap";
+
+  const header = document.getElementById("site-header");
+  const toggle = document.getElementById("menu-toggle");
+  const mobileMenu = document.getElementById("mobile-menu");
+  const langToggle = document.getElementById("lang-toggle");
+  const langMenu = document.getElementById("lang-menu");
+  const platformToggle = document.getElementById("platform-toggle");
+  const platformMenu = document.getElementById("platform-menu");
+
+  const onScroll = () => header?.toggleAttribute("data-scrolled", window.scrollY > 8);
+  onScroll();
+  window.addEventListener("scroll", onScroll, { passive: true });
+
+  const setMobile = (open: boolean) => {
+    mobileMenu?.toggleAttribute("data-open", open);
+    toggle?.setAttribute("aria-expanded", String(open));
+    document.body.classList.toggle("overflow-hidden", open);
+  };
+  toggle?.addEventListener("click", () => {
+    setMobile(mobileMenu?.hasAttribute("data-open") !== true);
+  });
+  document.getElementById("mobile-scrim")?.addEventListener("click", () => setMobile(false));
+  document.getElementById("mobile-close")?.addEventListener("click", () => setMobile(false));
+
+  // Both dropdowns animate with GSAP: Apple-sheet feel — pop from the trigger
+  // edge with a long expo deceleration in, quick ease-in out. [data-open]
+  // still carries state for aria + the chevron.
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const isOpen = (menu: HTMLElement | null) => menu?.hasAttribute("data-open") === true;
+
+  const setOpen = (
+    menu: HTMLElement | null,
+    trigger: HTMLElement | null,
+    open: boolean,
+    origin = "top center",
+  ) => {
+    if (!menu || isOpen(menu) === open) return;
+    menu.toggleAttribute("data-open", open);
+    trigger?.setAttribute("aria-expanded", String(open));
+
+    gsap.killTweensOf(menu);
+    if (reducedMotion) {
+      gsap.set(menu, { autoAlpha: open ? 1 : 0, y: 0, scale: 1 });
+      return;
+    }
+    if (open) {
+      gsap.set(menu, { transformOrigin: origin });
+      gsap.fromTo(
+        menu,
+        { autoAlpha: 0, y: -10, scale: 0.95 },
+        { autoAlpha: 1, y: 0, scale: 1, duration: 0.45, ease: "expo.out" },
+      );
+    } else {
+      gsap.to(menu, { autoAlpha: 0, y: -8, scale: 0.97, duration: 0.2, ease: "power2.in" });
+    }
+  };
+
+  // Language dropdown: click-toggle, pops from its top-right corner.
+  langToggle?.addEventListener("click", () => {
+    setOpen(langMenu, langToggle, !isOpen(langMenu), "top right");
+  });
+
+  // Platform mega menu: opens on hover (with a close delay so the pointer can
+  // travel across the gap), toggles on click/Enter for touch and keyboard.
+  let closeTimer: ReturnType<typeof setTimeout> | undefined;
+
+  // Mega menu contents (feature card + links) stagger in after the panel pops.
+  const platformItems = platformMenu
+    ? gsap.utils.toArray<Element>("#platform-menu .grid > a, #platform-menu li")
+    : [];
+
+  const setPlatform = (open: boolean) => {
+    const wasOpen = isOpen(platformMenu);
+    clearTimeout(closeTimer);
+    setOpen(platformMenu, platformToggle, open);
+    if (open && !wasOpen && !reducedMotion && platformItems.length > 0) {
+      gsap.fromTo(
+        platformItems,
+        { autoAlpha: 0, y: 10 },
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.45,
+          ease: "power3.out",
+          stagger: 0.035,
+          delay: 0.08,
+          overwrite: "auto",
+        },
+      );
+    }
+  };
+  const scheduleClose = () => {
+    clearTimeout(closeTimer);
+    closeTimer = setTimeout(() => setPlatform(false), 150);
+  };
+
+  for (const el of [platformToggle, platformMenu]) {
+    el?.addEventListener("mouseenter", () => setPlatform(true));
+    el?.addEventListener("mouseleave", scheduleClose);
+  }
+  platformToggle?.addEventListener("click", () => {
+    setPlatform(!isOpen(platformMenu));
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      setPlatform(false);
+      setOpen(langMenu, langToggle, false);
+      setMobile(false);
+    }
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!(event.target instanceof Node)) return;
+    if (
+      isOpen(platformMenu) &&
+      !platformMenu?.contains(event.target) &&
+      !platformToggle?.contains(event.target)
+    ) {
+      setPlatform(false);
+    }
+    if (
+      isOpen(langMenu) &&
+      !langMenu?.contains(event.target) &&
+      !langToggle?.contains(event.target)
+    ) {
+      setOpen(langMenu, langToggle, false);
+    }
+  });
+</script>

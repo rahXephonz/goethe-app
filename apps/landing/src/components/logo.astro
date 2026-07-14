@@ -1,0 +1,15 @@
+---
+// Brand mark: Syne "g" (glyph traced to a path — no font-load flash, matches
+// favicon.svg exactly) on a square, zero-radius gradient tile.
+interface Props {
+  /** Pixel size of the square mark. */
+  size?: number;
+  /** Render the "goethe" wordmark next to the mark. */
+  wordmark?: boolean;
+  class?: string;
+}
+---
+
+<span class:list={["inline-flex items-center gap-2"]}>
+  <span class="font-logo text-2xl font-bold tracking-tight text-ink">gœthe</span>
+</span>

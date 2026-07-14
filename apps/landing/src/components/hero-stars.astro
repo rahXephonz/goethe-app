@@ -1,0 +1,224 @@
+---
+// Atmospheric night-sky star field. Stars are generated at build time with a
+// seeded PRNG (deterministic HTML) and animated purely in CSS — twinkle
+// (opacity) + drift (transform) with randomized durations/delays so no loop
+// is perceivable. A single reused element handles shooting stars; a tiny
+// rAF-lerp handles mouse parallax. Decorative only: aria-hidden, no pointer
+// events, everything disabled under prefers-reduced-motion.
+interface Props {
+  /** Star count; ~160 spans is cheap to render and composite. */
+  count?: number;
+  /** "Midnight Breeze": a barely-there mist drifting across the sky. */
+  breeze?: boolean;
+  class?: string;
+}
+
+const { count = 160, breeze = true, class: className } = Astro.props;
+
+let seed = 1337;
+const rand = () => {
+  seed = (seed * 1664525 + 1013904223) % 4294967296;
+  return seed / 4294967296;
+};
+
+const stars = Array.from({ length: count }, () => {
+  const size = 1.2 + rand() * 1.8;
+  return {
+    left: (rand() * 100).toFixed(2),
+    top: (rand() * 100).toFixed(2),
+    size: size.toFixed(2),
+    color: rand() > 0.65 ? "#dbe8ff" : "#ffffff",
+    oMin: (0.3 + rand() * 0.3).toFixed(2),
+    oMax: (0.75 + rand() * 0.25).toFixed(2),
+    twinkle: (2.5 + rand() * 5).toFixed(2),
+    twinkleDelay: (rand() * 8).toFixed(2),
+    dx: (rand() * 4 - 2).toFixed(2),
+    dy: (rand() * 4 - 2).toFixed(2),
+    drift: (10 + rand() * 14).toFixed(2),
+    driftDelay: (rand() * 10).toFixed(2),
+    // Every star glows; bigger stars get a wide extra bloom layer.
+    bloom: size > 2,
+  };
+});
+
+const glowCss = (size: string, bloom: boolean) => {
+  const s = Number(size);
+  const layers = [
+    `0 0 ${(s * 2).toFixed(1)}px rgba(255,255,255,0.9)`,
+    `0 0 ${(s * 5).toFixed(1)}px rgba(214,229,255,0.65)`,
+  ];
+  if (bloom) layers.push(`0 0 ${(s * 10).toFixed(1)}px rgba(190,214,255,0.35)`);
+  return `box-shadow:${layers.join(",")};`;
+};
+---
+
+<div
+  data-hero-stars
+  aria-hidden="true"
+  class:list={[
+    "pointer-events-none absolute -inset-4 bottom-[20%] will-change-transform",
+    className,
+  ]}
+>
+  {
+    stars.map((s) => (
+      <span
+        class="star"
+        style={`left:${s.left}%;top:${s.top}%;width:${s.size}px;height:${s.size}px;background:${s.color};--o-min:${s.oMin};--o-max:${s.oMax};--tw:${s.twinkle}s;--twd:${s.twinkleDelay}s;--dx:${s.dx}px;--dy:${s.dy}px;--dr:${s.drift}s;--drd:${s.driftDelay}s;${glowCss(s.size, s.bloom)}`}
+      />
+    ))
+  }
+  <span class="shooting-star"></span>
+  {breeze && <span class="midnight-breeze" />}
+</div>
+
+<style>
+  .star {
+    position: absolute;
+    border-radius: 9999px;
+    opacity: var(--o-min);
+    animation:
+      star-twinkle var(--tw) ease-in-out var(--twd) infinite,
+      star-drift var(--dr) ease-in-out var(--drd) infinite alternate;
+  }
+
+  @keyframes star-twinkle {
+    0%,
+    100% {
+      opacity: var(--o-min);
+    }
+    50% {
+      opacity: var(--o-max);
+    }
+  }
+
+  @keyframes star-drift {
+    from {
+      transform: translate(0, 0);
+    }
+    to {
+      transform: translate(var(--dx), var(--dy));
+    }
+  }
+
+  .shooting-star {
+    position: absolute;
+    width: 110px;
+    height: 1.5px;
+    border-radius: 9999px;
+    opacity: 0;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(222, 234, 255, 0.9));
+    filter: drop-shadow(0 0 4px rgba(200, 220, 255, 0.6));
+  }
+
+  .midnight-breeze {
+    position: absolute;
+    width: 55%;
+    height: 45%;
+    opacity: 0;
+    background: radial-gradient(ellipse at center, rgba(219, 232, 255, 0.9), transparent 70%);
+    filter: blur(28px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .star {
+      animation: none;
+    }
+    .shooting-star,
+    .midnight-breeze {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  for (const field of document.querySelectorAll<HTMLElement>("[data-hero-stars]")) {
+    // Shooting star: one element, one timer chain -> never more than one at a
+    // time. Skips a cycle when the tab is hidden.
+    const shooter = field.querySelector<HTMLElement>(".shooting-star");
+    const spawn = () => {
+      window.setTimeout(
+        () => {
+          if (!shooter) return;
+          if (document.hidden) return spawn();
+          const angle = 18 + Math.random() * 20;
+          shooter.style.left = `${5 + Math.random() * 55}%`;
+          shooter.style.top = `${5 + Math.random() * 45}%`;
+          const anim = shooter.animate(
+            [
+              { transform: `rotate(${angle}deg) translateX(0)`, opacity: 0 },
+              { opacity: 0.85, offset: 0.15 },
+              { transform: `rotate(${angle}deg) translateX(440px)`, opacity: 0 },
+            ],
+            { duration: 1300 + Math.random() * 500, easing: "cubic-bezier(0.25, 0.1, 0.25, 1)" },
+          );
+          anim.onfinish = spawn;
+        },
+        12000 + Math.random() * 13000,
+      );
+    };
+    if (!reduced) spawn();
+
+    // Midnight Breeze: one mist layer drifting across every 20–30s. Peaks at
+    // 3% opacity — felt as "organic", never consciously seen.
+    const mist = field.querySelector<HTMLElement>(".midnight-breeze");
+    const drift = () => {
+      window.setTimeout(
+        () => {
+          if (!mist) return;
+          if (document.hidden) return drift();
+          const w = field.clientWidth;
+          const rtl = Math.random() > 0.5;
+          mist.style.top = `${Math.random() * 50}%`;
+          mist.style.left = rtl ? "100%" : "-55%";
+          const dist = (rtl ? -1 : 1) * w * 1.15;
+          const anim = mist.animate(
+            [
+              { transform: "translateX(0)", opacity: 0 },
+              { opacity: 0.03, offset: 0.5 },
+              { transform: `translateX(${dist.toFixed(0)}px)`, opacity: 0 },
+            ],
+            { duration: 12000 + Math.random() * 6000, easing: "linear" },
+          );
+          anim.onfinish = drift;
+        },
+        20000 + Math.random() * 10000,
+      );
+    };
+    if (!reduced && mist) drift();
+
+    // Mouse parallax: lerped, ±6px max, fine pointers only.
+    if (!reduced && window.matchMedia("(pointer: fine)").matches) {
+      const MAX = 6;
+      const EASE = 0.06;
+      let targetX = 0;
+      let targetY = 0;
+      let x = 0;
+      let y = 0;
+      let raf = 0;
+
+      const step = () => {
+        x += (targetX - x) * EASE;
+        y += (targetY - y) * EASE;
+        field.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0)`;
+        if (Math.abs(targetX - x) > 0.05 || Math.abs(targetY - y) > 0.05) {
+          raf = requestAnimationFrame(step);
+        } else {
+          raf = 0;
+        }
+      };
+
+      window.addEventListener(
+        "mousemove",
+        (event) => {
+          targetX = (event.clientX / window.innerWidth - 0.5) * 2 * MAX;
+          targetY = (event.clientY / window.innerHeight - 0.5) * 2 * MAX;
+          if (!raf) raf = requestAnimationFrame(step);
+        },
+        { passive: true },
+      );
+    }
+  }
+</script>

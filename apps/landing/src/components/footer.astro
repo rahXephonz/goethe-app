@@ -1,0 +1,105 @@
+---
+import { createTranslator, type Locale } from "@goethepro/i18n";
+import { appUrl } from "../lib/app-url";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = createTranslator(locale);
+
+// Same content the navbar exposes; anchors fill in with the content pass.
+const platformRow = [
+  { href: "#todays-plan", label: t("landing.nav.platform.todaysPlan") },
+  { href: "#daily-exam", label: t("landing.nav.platform.dailyExam") },
+  { href: "#srs-review", label: t("landing.nav.platform.srsReview") },
+  { href: "#roadmap", label: t("landing.nav.platform.roadmap") },
+  { href: "#ai-assistant", label: t("landing.nav.platform.aiAssistant") },
+];
+
+const columns = [
+  [
+    { href: "#learning-path", label: t("landing.nav.learningPath") },
+    { href: "#how-it-works", label: t("landing.nav.howItWorks") },
+  ],
+  [
+    { href: appUrl("/register"), label: t("auth.register.title") },
+    { href: appUrl("/login"), label: t("auth.login.title") },
+  ],
+];
+
+const year = new Date().getFullYear();
+---
+
+<footer class="bg-cream">
+  <div
+    class="mx-auto grid max-w-6xl gap-12 px-6 py-20 md:grid-cols-[3fr_2fr] md:items-start md:gap-16"
+  >
+    <div class="flex flex-col gap-10">
+      <h2 class="font-display text-4xl font-normal tracking-tight sm:text-5xl">
+        {t("landing.footer.headline1")}<br />
+        <span class="text-ink/40">{t("landing.footer.headline2")}</span>
+      </h2>
+
+      <p class="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
+        <span class="text-ink/40">{t("landing.nav.platform")}</span>
+        {
+          platformRow.map((link) => (
+            <a href={link.href} class="font-medium text-ink transition-colors hover:text-brand">
+              {link.label}
+            </a>
+          ))
+        }
+      </p>
+
+      <div class="grid max-w-md grid-cols-2 gap-8">
+        {
+          columns.map((column) => (
+            <ul class="flex flex-col gap-3 text-sm">
+              {column.map((link) => (
+                <li>
+                  <a href={link.href} class="text-ink/80 transition-colors hover:text-brand">
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ))
+        }
+      </div>
+
+      <div class="text-sm text-ink/50">
+        <p>{t("landing.footer.beta")}</p>
+        <p class="mt-2">© {year} goethe.pro</p>
+      </div>
+    </div>
+
+    <div class="relative overflow-hidden rounded-2xl border border-ink/10 shadow-sm">
+      <img
+        src="/images/hero-night.webp"
+        alt=""
+        width="1440"
+        height="1024"
+        loading="lazy"
+        class="aspect-4/5 w-full object-cover"
+      />
+      <div class="absolute inset-x-4 top-4 rounded-xl bg-white/10 p-5 backdrop-blur-md">
+        <p class="text-lg leading-snug text-white">
+          {t("landing.footer.cardLead")}
+          <span class="text-white/70">{t("landing.footer.cardRest")}</span>
+        </p>
+        <a
+          href={appUrl("/")}
+          class="mt-4 inline-block rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-ink transition hover:-translate-y-px hover:shadow-md"
+        >
+          {t("landing.nav.openApp")}
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-linear-to-b from-brand to-brand-deep py-2 text-center text-sm text-white/90">
+    {t("landing.footer.madeWith")}
+  </div>
+</footer>
