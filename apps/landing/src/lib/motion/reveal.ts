@@ -1,38 +1,56 @@
 import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { prefersReducedMotion } from "./smooth-scroll";
 
 /**
  * Fade-up reveal for every `[data-reveal]` element as it enters the viewport.
  * Elements inside a `[data-reveal-group]` stagger together instead.
+ *
+ * Triggered by IntersectionObserver rather than ScrollTrigger: IO stays
+ * correct regardless of sticky/pinned sections and Lenis' smoothed scroll,
+ * where ScrollTrigger's cached positions proved flaky.
  */
 export const initReveals = (): void => {
   if (prefersReducedMotion()) return;
 
-  gsap.registerPlugin(ScrollTrigger);
-
   const singles = document.querySelectorAll<HTMLElement>(
     "[data-reveal]:not([data-reveal-group] [data-reveal])",
   );
-  for (const el of singles) {
-    gsap.from(el, {
-      y: 32,
-      autoAlpha: 0,
-      duration: 0.8,
-      ease: "power3.out",
-      scrollTrigger: { trigger: el, start: "top 85%" },
-    });
-  }
-
   const groups = document.querySelectorAll<HTMLElement>("[data-reveal-group]");
-  for (const group of groups) {
-    gsap.from(group.querySelectorAll("[data-reveal]"), {
-      y: 32,
-      autoAlpha: 0,
+
+  const show = (targets: gsap.TweenTarget, stagger = 0) => {
+    gsap.to(targets, {
+      y: 0,
+      autoAlpha: 1,
       duration: 0.8,
       ease: "power3.out",
-      stagger: 0.12,
-      scrollTrigger: { trigger: group, start: "top 85%" },
+      stagger,
+      overwrite: "auto",
     });
+  };
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        io.unobserve(entry.target);
+        const el = entry.target as HTMLElement;
+        if (el.hasAttribute("data-reveal-group")) {
+          show(el.querySelectorAll("[data-reveal]"), 0.12);
+        } else {
+          show(el);
+        }
+      }
+    },
+    // Fire once the element is 12% up from the viewport bottom.
+    { rootMargin: "0px 0px -12% 0px" },
+  );
+
+  for (const el of singles) {
+    gsap.set(el, { y: 32, autoAlpha: 0 });
+    io.observe(el);
+  }
+  for (const group of groups) {
+    gsap.set(group.querySelectorAll("[data-reveal]"), { y: 32, autoAlpha: 0 });
+    io.observe(group);
   }
 };

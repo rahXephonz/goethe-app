@@ -1,7 +1,7 @@
 ---
 import "lenis/dist/lenis.css";
 import "../styles/global.css";
-import { DEFAULT_LOCALE, LOCALES, type Locale } from "@goethepro/i18n";
+import { DEFAULT_LOCALE, LOCALES, type Locale } from "@lingua/i18n";
 import Footer from "../components/footer.astro";
 import Navbar from "../components/navbar.astro";
 
@@ -14,7 +14,7 @@ interface Props {
 const {
   locale = DEFAULT_LOCALE,
   title,
-  description = "Learn German A0 to B1, one honest day at a time.",
+  description = "Learn German, English, or Japanese — one honest day at a time.",
 } = Astro.props;
 
 const localePath = (l: Locale) => (l === "en" ? "/" : `/${l}/`);

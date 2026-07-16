@@ -1,5 +1,5 @@
 ---
-import { createTranslator, type Locale } from "@goethepro/i18n";
+import { createTranslator, type Locale } from "@lingua/i18n";
 import { appUrl } from "../lib/app-url";
 
 interface Props {
@@ -32,14 +32,14 @@ const columns = [
 const year = new Date().getFullYear();
 ---
 
-<footer class="bg-cream">
+<footer class="relative z-10 bg-cream">
   <div
     class="mx-auto grid max-w-6xl gap-12 px-6 py-20 md:grid-cols-[3fr_2fr] md:items-start md:gap-16"
   >
     <div class="flex flex-col gap-10">
       <h2 class="font-display text-4xl font-normal tracking-tight sm:text-5xl">
-        {t("landing.footer.headline1")}<br />
-        <span class="text-ink/40">{t("landing.footer.headline2")}</span>
+        {t("landing.footer.title")}<br />
+        <span class="text-ink/40">{t("landing.footer.subtitle")}</span>
       </h2>
 
       <p class="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
@@ -71,7 +71,7 @@ const year = new Date().getFullYear();
 
       <div class="text-sm text-ink/50">
         <p>{t("landing.footer.beta")}</p>
-        <p class="mt-2">© {year} goethe.pro</p>
+        <p class="mt-2">© {year} linguaa.app</p>
       </div>
     </div>
 

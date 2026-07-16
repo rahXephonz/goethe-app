@@ -1,24 +1,33 @@
 ---
-import { createTranslator, resolveLocale } from "@goethepro/i18n";
+import { createTranslator, resolveLocale } from "@lingua/i18n";
 import { ArrowUpRight } from "@lucide/astro";
+import EarlyAccess from "../../components/early-access.astro";
+import Faq from "../../components/faq.astro";
 import HeroStars from "../../components/hero-stars.astro";
+import LearningPath from "../../components/learning-path.astro";
+import Philosophy from "../../components/philosophy.astro";
 import LandingLayout from "../../layouts/landing-layout.astro";
 import { appUrl } from "../../lib/app-url";
 
 // Static locale routes: / (en), /id/, /de/. Navbar + chrome are translated;
 // body copy is placeholder-English until the content/design pass.
 export function getStaticPaths() {
-  return [{ params: { lang: undefined } }, { params: { lang: "id" } }, { params: { lang: "de" } }];
+  return [
+    { params: { lang: undefined } },
+    { params: { lang: "id" } },
+    { params: { lang: "de" } },
+    { params: { lang: "ja" } },
+  ];
 }
 
 const locale = resolveLocale(Astro.params.lang);
 const t = createTranslator(locale);
 ---
 
-<LandingLayout locale={locale} title="goethe.pro — German for the Ausbildung route">
+<LandingLayout locale={locale} title="linguaa.app — languages in the quiet hours">
   <main>
     <section
-      class="relative flex min-h-svh flex-col items-center justify-center overflow-hidden px-6 text-center"
+      class="sticky top-0 z-0 flex min-h-svh flex-col items-center justify-center overflow-hidden px-6 text-center"
     >
       <img
         src="/images/hero-night.webp"
@@ -31,7 +40,7 @@ const t = createTranslator(locale);
         class="absolute inset-0 -z-10 size-full object-cover"
       />
       <HeroStars />
-      <div class="flex max-w-3xl flex-col items-center gap-6 pt-14">
+      <div data-hero-inner class="flex max-w-3xl flex-col items-center gap-6 pt-14">
         <h1
           data-reveal
           class="font-display text-6xl font-normal tracking-tight text-white sm:text-7xl"
@@ -43,10 +52,10 @@ const t = createTranslator(locale);
         </p>
         <div data-reveal class="flex items-center gap-2">
           <a
-            href={appUrl("/register")}
+            href="#early-access"
             class="rounded-full bg-linear-to-b from-brand to-brand-deep px-7 py-3.5 font-semibold text-white shadow-sm transition hover:-translate-y-px hover:shadow-md hover:brightness-110"
           >
-            {t("landing.hero.redeemInvite")}
+            {t("landing.hero.joinWaitlist")}
           </a>
           <a
             href={appUrl("/login")}
@@ -59,52 +68,36 @@ const t = createTranslator(locale);
       </div>
     </section>
 
-    <section id="how-it-works" class="mx-auto max-w-5xl px-6 py-24">
-      <h2 data-reveal class="font-display text-6xl font-normal tracking-tight">
-        One honest daily loop
-      </h2>
-      <div data-reveal-group class="mt-12 grid gap-8 sm:grid-cols-3">
-        <div
-          data-reveal
-          class="rounded-2xl border border-ink/10 bg-white p-6 transition-colors hover:border-brand"
-        >
-          <h3 class="font-semibold">Today's Plan</h3>
-          <p class="mt-2 text-sm text-ink/60">
-            One unit, your due reviews, one exam. No infinite feed.
-          </p>
-        </div>
-        <div
-          data-reveal
-          class="rounded-2xl border border-ink/10 bg-white p-6 transition-colors hover:border-brand"
-        >
-          <h3 class="font-semibold">Daily Exam</h3>
-          <p class="mt-2 text-sm text-ink/60">
-            Ten questions assembled only from vocab and grammar you have met.
-          </p>
-        </div>
-        <div
-          data-reveal
-          class="rounded-2xl border border-ink/10 bg-white p-6 transition-colors hover:border-brand"
-        >
-          <h3 class="font-semibold">Real progress</h3>
-          <p class="mt-2 text-sm text-ink/60">
-            Skill scores appear once there is enough data — never before.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <section class="flex flex-col items-center gap-6 px-6 py-32 text-center">
-      <h2 data-reveal class="font-display text-4xl font-normal tracking-tight">
-        Have an invite code?
-      </h2>
-      <a
-        data-reveal
-        href={appUrl("/register")}
-        class="rounded-xl bg-linear-to-b from-brand to-brand-deep px-6 py-3 font-semibold text-white shadow-sm transition hover:-translate-y-px hover:shadow-md hover:brightness-110"
-      >
-        Create your account
-      </a>
-    </section>
+    <div
+      data-hero-overlay
+      class="relative z-10 overflow-hidden rounded-t-3xl bg-cream shadow-[0_-24px_60px_rgba(10,16,28,0.35)]"
+    >
+      <LearningPath locale={locale} />
+      <Philosophy locale={locale} />
+      <Faq locale={locale} />
+      <EarlyAccess locale={locale} />
+    </div>
   </main>
+
+  <script>
+    import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+    // As the overlay rises, the pinned hero content recedes slightly —
+    // scale + fade scrubbed to scroll, like a sheet covering a screen.
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      gsap.registerPlugin(ScrollTrigger);
+      gsap.to("[data-hero-inner]", {
+        scale: 0.92,
+        autoAlpha: 0.35,
+        ease: "none",
+        scrollTrigger: {
+          trigger: "[data-hero-overlay]",
+          start: "top bottom",
+          end: "top 25%",
+          scrub: true,
+        },
+      });
+    }
+  </script>
 </LandingLayout>

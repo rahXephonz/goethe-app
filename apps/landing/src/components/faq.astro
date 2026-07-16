@@ -1,0 +1,141 @@
+---
+import { createTranslator, type Locale, type MessageKey } from "@lingua/i18n";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = createTranslator(locale);
+
+const items = [
+  ["landing.faq.ai.question", "landing.faq.ai.answer"],
+  ["landing.faq.time.question", "landing.faq.time.answer"],
+  ["landing.faq.beginner.question", "landing.faq.beginner.answer"],
+  ["landing.faq.languages.question", "landing.faq.languages.answer"],
+  ["landing.faq.dailyLoop.question", "landing.faq.dailyLoop.answer"],
+  ["landing.faq.cost.question", "landing.faq.cost.answer"],
+  ["landing.faq.progress.question", "landing.faq.progress.answer"],
+] as const satisfies readonly (readonly [MessageKey, MessageKey])[];
+---
+
+<section id="faq" class="bg-white px-6 py-28 text-[#161b24] sm:py-36">
+  <div
+    class="mx-auto grid w-full max-w-6xl grid-cols-[0.92fr_1.08fr] gap-16 max-[56rem]:grid-cols-1 max-[56rem]:gap-12"
+  >
+    <header class="max-w-156">
+      <h2
+        class="font-display text-[clamp(3.25rem,5.1vw,5.1rem)] leading-[0.96] font-normal tracking-[-0.045em] text-balance"
+      >
+        {t("landing.faq.title")}
+      </h2>
+      <p class="mt-10 max-w-124 text-lg leading-relaxed text-[#3f434b]">
+        {t("landing.faq.subtitle")}
+      </p>
+    </header>
+
+    <div class="flex flex-col gap-3.5">
+      {
+        items.map(([question, answer], index) => (
+          <details
+            data-faq-item
+            class="group rounded-xl border border-[#e2e4e8] bg-white open:bg-[#f8f8f8]"
+            open={index === 1}
+          >
+            <summary
+              data-faq-trigger
+              class="flex min-h-16 cursor-pointer list-none items-center justify-between gap-6 px-6 py-3 text-[1.05rem] leading-snug font-medium select-none [&::-webkit-details-marker]:hidden"
+            >
+              <span>{t(question)}</span>
+              <span
+                class="grid size-7 shrink-0 place-items-center text-2xl leading-none font-light text-[#737780] group-open:hidden"
+                aria-hidden="true"
+              >
+                +
+              </span>
+              <span
+                class="hidden size-7 shrink-0 place-items-center text-2xl leading-none font-light text-[#737780] group-open:grid"
+                aria-hidden="true"
+              >
+                −
+              </span>
+            </summary>
+            <div data-faq-content class="overflow-hidden">
+              <p class="max-w-172 px-6 pb-5 text-base leading-[1.55] text-[#737780]">{t(answer)}</p>
+            </div>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<script>
+  import { gsap } from "gsap";
+
+  const items = Array.from(document.querySelectorAll<HTMLDetailsElement>("[data-faq-item]"));
+  const desiredState = new WeakMap<HTMLDetailsElement, boolean>();
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const getContent = (item: HTMLDetailsElement) =>
+    item.querySelector<HTMLElement>("[data-faq-content]");
+
+  const setItem = (item: HTMLDetailsElement, shouldOpen: boolean) => {
+    const content = getContent(item);
+    if (!content) return;
+
+    desiredState.set(item, shouldOpen);
+    gsap.killTweensOf(content);
+
+    if (reduceMotion) {
+      item.open = shouldOpen;
+      gsap.set(content, { clearProps: "height,opacity,visibility" });
+      return;
+    }
+
+    if (shouldOpen) {
+      item.open = true;
+      gsap.to(content, {
+        height: "auto",
+        autoAlpha: 1,
+        duration: 0.42,
+        ease: "power3.out",
+        overwrite: true,
+      });
+      return;
+    }
+
+    gsap.to(content, {
+      height: 0,
+      autoAlpha: 0,
+      duration: 0.28,
+      ease: "power2.inOut",
+      overwrite: true,
+      onComplete: () => {
+        if (desiredState.get(item) === false) item.open = false;
+      },
+    });
+  };
+
+  items.forEach((item) => {
+    const content = getContent(item);
+    const trigger = item.querySelector<HTMLElement>("[data-faq-trigger]");
+    if (!content || !trigger) return;
+
+    desiredState.set(item, item.open);
+    gsap.set(content, { height: item.open ? "auto" : 0, autoAlpha: item.open ? 1 : 0 });
+
+    trigger.addEventListener("click", (event) => {
+      event.preventDefault();
+      const shouldOpen = !desiredState.get(item);
+
+      if (shouldOpen) {
+        items.forEach((other) => {
+          if (other !== item && desiredState.get(other)) setItem(other, false);
+        });
+      }
+
+      setItem(item, shouldOpen);
+    });
+  });
+</script>

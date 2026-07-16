@@ -1,0 +1,88 @@
+---
+import { createTranslator, type Locale } from "@lingua/i18n";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = createTranslator(locale);
+
+const cards = [
+  {
+    className:
+      "after:absolute after:-right-[5.25rem] after:-bottom-[8.75rem] after:aspect-square after:w-72 after:rotate-[10deg] after:rounded-[4.5rem] after:border-[3.5rem] after:border-[rgba(42,74,128,0.065)] after:content-['']",
+    title: t("landing.philosophy.learn.title"),
+    body: t("landing.philosophy.learn.body"),
+  },
+  {
+    className:
+      "before:absolute before:-right-[3.75rem] before:-bottom-[7.5rem] before:aspect-square before:w-64 before:rounded-full before:bg-[rgba(42,74,128,0.065)] before:content-[''] after:absolute after:right-[7.25rem] after:-bottom-[5.75rem] after:aspect-square after:w-36 after:rounded-full after:border-[1.75rem] after:border-[rgba(42,74,128,0.05)] after:content-['']",
+    title: t("landing.philosophy.review.title"),
+    body: t("landing.philosophy.review.body"),
+  },
+  {
+    className:
+      "col-start-3 row-span-2 row-start-1 after:absolute after:-right-40 after:-bottom-32 after:aspect-square after:w-[31rem] after:rounded-full after:border-[4.75rem] after:border-[rgba(42,74,128,0.08)] after:content-[''] max-[56rem]:col-start-2 max-[56rem]:row-start-2 max-[38rem]:col-start-1 max-[38rem]:row-auto max-[38rem]:min-h-72",
+    title: t("landing.philosophy.master.title"),
+    body: t("landing.philosophy.master.body"),
+  },
+  {
+    className:
+      "col-span-2 row-start-2 max-[56rem]:col-span-1 max-[56rem]:col-start-1 max-[56rem]:row-span-2 max-[56rem]:row-start-2 max-[38rem]:row-auto max-[38rem]:min-h-60",
+    hasOrb: true,
+    title: t("landing.philosophy.reflect.title"),
+    body: t("landing.philosophy.reflect.body"),
+  },
+] as const;
+---
+
+<section
+  id="how-it-works"
+  class="relative min-h-246 overflow-hidden bg-[#082e6f] px-6 pt-22 pb-21 text-white before:pointer-events-none before:absolute before:inset-0 before:bg-[url('/images/philosophy-bg.png')] before:bg-cover before:bg-top before:bg-no-repeat before:opacity-28 before:content-[''] max-[56rem]:min-h-0 max-[56rem]:pt-18 max-[38rem]:px-3 max-[38rem]:pb-10"
+>
+  <div class="relative z-1 mx-auto w-[min(83.125vw,104rem)] max-[56rem]:w-full">
+    <header
+      class="flex min-h-78 flex-col items-center text-center max-[56rem]:min-h-82 max-[38rem]:min-h-90 max-[38rem]:px-3"
+    >
+      <h2
+        class="m-0 max-w-184 text-balance font-display text-[clamp(2.65rem,4.1vw,3.7rem)] leading-[1.08] font-normal tracking-[-0.035em] max-[38rem]:text-[clamp(2.4rem,12vw,3.15rem)]"
+      >
+        {t("landing.philosophy.title")}
+      </h2>
+      <p
+        class="mt-[1.7rem] max-w-176 text-balance text-base leading-[1.55] text-white/90 max-[38rem]:mt-[1.35rem] max-[38rem]:text-[0.8125rem]"
+      >
+        {t("landing.philosophy.subtitle")}
+      </p>
+    </header>
+
+    <div
+      class="grid grid-cols-[1fr_1fr_1.46fr] grid-rows-[repeat(2,14.75rem)] gap-3.5 max-[56rem]:grid-cols-2 max-[56rem]:grid-rows-[repeat(3,13rem)] max-[38rem]:grid-cols-1 max-[38rem]:grid-rows-none"
+    >
+      {
+        cards.map((card) => (
+          <article
+            class:list={[
+              "relative flex min-w-0 items-end overflow-hidden rounded-[1.25rem] border border-[rgba(13,32,78,0.09)] bg-[#f8f8f8] p-[1.2rem] text-[#161b24] max-[38rem]:col-start-1 max-[38rem]:row-auto max-[38rem]:min-h-54",
+              card.className,
+            ]}
+          >
+            {"hasOrb" in card && card.hasOrb && (
+              <span
+                class="absolute -right-13 -bottom-38 aspect-square w-90 rounded-full bg-[rgba(42,74,128,0.065)] max-[56rem]:-right-32"
+                aria-hidden="true"
+              />
+            )}
+            <div class="relative z-2 max-w-92">
+              <h3 class="mb-[0.45rem] text-4xl leading-[1.2] font-semibold font-display">
+                {card.title}
+              </h3>
+              <p class="text-base leading-[1.48] text-[#737780]">{card.body}</p>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

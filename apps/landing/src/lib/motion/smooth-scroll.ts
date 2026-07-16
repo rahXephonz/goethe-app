@@ -15,7 +15,7 @@ export const initSmoothScroll = (): Lenis | null => {
 
   gsap.registerPlugin(ScrollTrigger);
 
-  const lenis = new Lenis();
+  const lenis = new Lenis({ anchors: true });
   lenis.on("scroll", ScrollTrigger.update);
   gsap.ticker.add((time) => {
     lenis.raf(time * 1000);

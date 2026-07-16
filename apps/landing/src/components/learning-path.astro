@@ -1,0 +1,124 @@
+---
+import { createTranslator, type Locale } from "@lingua/i18n";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = createTranslator(locale);
+
+const steps = [
+  {
+    number: "01",
+    days: t("landing.learningPath.step1.days"),
+    title: t("landing.learningPath.step1.title"),
+    body: t("landing.learningPath.step1.body"),
+    active: true,
+  },
+  {
+    number: "02",
+    days: t("landing.learningPath.step2.days"),
+    title: t("landing.learningPath.step2.title"),
+    body: t("landing.learningPath.step2.body"),
+    active: false,
+  },
+  {
+    number: "03",
+    days: t("landing.learningPath.step3.days"),
+    title: t("landing.learningPath.step3.title"),
+    body: t("landing.learningPath.step3.body"),
+    active: false,
+  },
+] as const;
+---
+
+<section id="learning-path" class="bg-white px-4 py-28 sm:py-32">
+  <div class="mx-auto max-w-5xl">
+    <header data-reveal class="flex flex-col items-center text-center">
+      <h2
+        class="mt-5 text-balance font-display text-5xl leading-[1.1] font-normal tracking-tight text-ink"
+      >
+        {t("landing.learningPath.title")}
+      </h2>
+      <p class="mt-4 max-w-md text-balance text-ink/55">
+        {t("landing.learningPath.subtitle")}
+      </p>
+    </header>
+
+    <div
+      data-reveal-group
+      class="mt-14 grid grid-cols-1 gap-3 rounded-3xl bg-cream p-3 sm:grid-cols-3"
+    >
+      {
+        steps.map((step) => (
+          <div
+            data-reveal
+            data-step
+            class="flex flex-col rounded-2xl bg-white p-8 shadow-[0_1px_2px_rgba(22,32,47,0.04)]"
+          >
+            <span
+              data-step-number
+              class:list={[
+                "font-sans text-4xl font-semibold",
+                step.active ? "text-ink" : "text-ink/20",
+              ]}
+            >
+              {step.number}
+            </span>
+
+            <div class="mt-16 flex flex-1 flex-col">
+              <span class="text-xs font-medium tracking-wide text-ink/40 uppercase">
+                {step.days}
+              </span>
+              <h3 class="mt-2 text-3xl font-semibold font-display text-ink">{step.title}</h3>
+              <p class="mt-3 text-sm leading-relaxed text-ink/55">{step.body}</p>
+            </div>
+
+            <div class="mt-6 h-1 overflow-hidden rounded-full bg-ink/8">
+              <div
+                data-step-bar
+                class="h-full rounded-full bg-brand"
+                style={`width: ${step.active ? "30%" : "0%"}`}
+              />
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<script>
+  import { gsap } from "gsap";
+
+  const STEP_DURATION = 10;
+
+  const steps = Array.from(document.querySelectorAll<HTMLElement>("[data-step]"));
+
+  const activate = (index: number) => {
+    steps.forEach((step, i) => {
+      const isActive = i === index;
+      const number = step.querySelector<HTMLElement>("[data-step-number]");
+      const bar = step.querySelector<HTMLElement>("[data-step-bar]");
+      number?.classList.toggle("text-ink", isActive);
+      number?.classList.toggle("text-ink/20", !isActive);
+      if (!bar) return;
+
+      gsap.killTweensOf(bar);
+      gsap.set(bar, { width: "0%" });
+      if (isActive) {
+        gsap.to(bar, {
+          width: "100%",
+          duration: STEP_DURATION,
+          ease: "none",
+          onComplete: () => activate((index + 1) % steps.length),
+        });
+      }
+    });
+  };
+
+  if (steps.length > 0 && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    activate(0);
+  }
+</script>

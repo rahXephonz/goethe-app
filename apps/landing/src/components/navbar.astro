@@ -1,5 +1,5 @@
 ---
-import { createTranslator, LOCALE_LABELS, LOCALES, type Locale } from "@goethepro/i18n";
+import { createTranslator, LOCALE_LABELS, LOCALES, type Locale } from "@lingua/i18n";
 import { ChevronDown, ChevronRight, Globe, Languages, Menu, X } from "@lucide/astro";
 import { appUrl } from "../lib/app-url";
 import Logo from "./logo.astro";
@@ -22,7 +22,7 @@ const platformItems = [
   { href: "#mistake-log", label: t("landing.nav.platform.mistakeLog") },
   { href: "#roadmap", label: t("landing.nav.platform.roadmap") },
   { href: "#streak", label: t("landing.nav.platform.streak") },
-  { href: "#schreiben", label: t("landing.nav.platform.schreiben") },
+  { href: "#writing", label: t("landing.nav.platform.writingFeedback") },
   { href: "#placement-test", label: t("landing.nav.platform.placementTest") },
   { href: "#ai-assistant", label: t("landing.nav.platform.aiAssistant") },
 ];
@@ -128,7 +128,6 @@ const navLinks = [
       </a>
     </div>
 
-    <!-- Platform mega menu -->
     <div
       id="platform-menu"
       class="invisible absolute inset-x-0 top-full z-20 mt-2 rounded-xl border border-ink/5 bg-white p-4 opacity-0 shadow-lg max-md:hidden"
@@ -173,7 +172,6 @@ const navLinks = [
     </div>
   </div>
 
-  <!-- Mobile drawer: slides in from the left, scrim behind it. -->
   <div id="mobile-menu" class="group/drawer md:hidden">
     <div
       id="mobile-scrim"

@@ -1,0 +1,57 @@
+---
+import { createTranslator, type Locale } from "@lingua/i18n";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = createTranslator(locale);
+---
+
+<section
+  id="early-access"
+  class="relative overflow-hidden bg-[#082e6f] px-6 py-24 text-center text-white before:pointer-events-none before:absolute before:inset-0 before:bg-[url('/images/philosophy-bg.png')] before:bg-cover before:bg-top before:bg-no-repeat before:opacity-20 before:content-['']"
+>
+  <div data-reveal class="relative z-1 mx-auto flex max-w-xl flex-col items-center">
+    <h2 class="text-balance font-display text-5xl font-normal tracking-tight sm:text-6xl">
+      {t("landing.earlyAccess.title")}
+    </h2>
+    <p class="mt-4 max-w-md text-balance text-white/80">
+      {t("landing.earlyAccess.subtitle")}
+    </p>
+
+    <form
+      data-waitlist-form
+      class="mt-8 flex w-full max-w-md items-center gap-1 rounded-full bg-white p-1.5 shadow-sm"
+    >
+      <input
+        type="email"
+        name="email"
+        required
+        placeholder={t("landing.earlyAccess.emailPlaceholder")}
+        aria-label={t("landing.earlyAccess.emailPlaceholder")}
+        class="min-w-0 flex-1 rounded-full bg-transparent px-4 py-2.5 text-sm text-ink placeholder:text-ink/40 focus:outline-none"
+      />
+      <button
+        type="submit"
+        class="shrink-0 rounded-full bg-linear-to-b cursor-pointer from-brand to-brand-deep px-6 py-2.5 text-sm font-semibold text-white transition hover:-translate-y-px hover:brightness-125"
+      >
+        {t("landing.earlyAccess.joinWaitlist")}
+      </button>
+    </form>
+
+    <p class="mt-5 text-sm text-white/60">
+      {t("landing.footer.beta")}
+    </p>
+  </div>
+</section>
+
+<script>
+  // No waitlist backend yet — capture is wired up once invite-code
+  // processing ships. For now this only stops a blank page reload.
+  const form = document.querySelector<HTMLFormElement>("[data-waitlist-form]");
+  form?.addEventListener("submit", (event) => {
+    event.preventDefault();
+  });
+</script>
